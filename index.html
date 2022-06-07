@@ -10,10 +10,23 @@
         integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
 
     <title>Music Album</title>
+
+    <style>
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Music Album</h1>
+
+    <div class="container">
+        <div class="row">
+            <!-- ALBUMS WILL BE GENERATED HERE -->
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -22,7 +35,13 @@
         integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
         crossorigin="anonymous"></script>
 
+
     <script>
+
+        /* Generate 3 lists automatically based on the “Search API” response,
+         Use the endpoint with “pink floyd“, “daft punk“, and “metallica“*/
+
+
         const options = {
             method: 'GET',
             headers: {
@@ -31,14 +50,36 @@
             }
         };
 
-        //  Generate 3 lists automatically based on the “Search API” response,
-        // Use the endpoint with “pink floyd“, “daft punk“, and “metallica“
+        //Display the items image + song title, and load them automatically after the page has finished loading.
 
-        fetch('https://striveschool-api.herokuapp.com/api/deezer/search?q=[pinkfloyd]', options)
+
+        fetch('https://deezerdevs-deezer.p.rapidapi.com/search?q=pinkfloyd', options)
             .then(response => response.json())
-            .then(musicList => { console.log(musicList) }
+            .then(songList => {
+                console.log(songList)
+
+                const grid = document.querySelector(".container > .row")
+
+                for (let i = 0; i < songList.data.length; i++) {
+                    const song = songList.data[i]
+
+                    const col = document.createElement("div")
+                    col.className = "col-sm-6 col-md-4 col-lg-3"
+
+                    col.innerHTML =
+                        ` <div class="card">
+                            <img src=${song.album.cover} class="card-img-top" alt=${song.album.title}>
+                                <div class="card-body">
+                                    <h5 class="card-title">${song.album.title}</h5>
+                                </div>
+                        </div>`
+
+                    grid.appendChild(col)
+                }
+            }
             )
             .catch(err => console.error(err));
+
 
         fetch('https://striveschool-api.herokuapp.com/api/deezer/search?q=[daftpunk]', options)
             .then(response => response.json())
